@@ -48,6 +48,7 @@ CREATE TABLE tutor (
     max_students INT DEFAULT 3,
     current_students INT DEFAULT 0,
     rating DECIMAL(3,2) DEFAULT 0,
+    status ENUM('active', 'inactive', 'suspended') DEFAULT 'active',
     FOREIGN KEY (tutor_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
