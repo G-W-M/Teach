@@ -1,0 +1,24 @@
+body.tutor-body {
+    background-color: #f8f9fb;
+}
+
+.tutor-header {
+    background-color: #003366;
+    color: white;
+    padding: 15px;
+    font-size: 18px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.tutor-card {
+    background-color: rgba(255,255,255,0.95);
+    border-left: 4px solid #0059b3;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+}
+
+.tutor-card h3 {
+    color: #003366;
+}

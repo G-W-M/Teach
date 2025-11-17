@@ -1,0 +1,26 @@
+<?php
+?>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TeachMe | Login</title>
+    <link rel="stylesheet" href="../Teach/assets/css/forms.css" />
+    <!-- Optional if you’ll style it later -->
+  </head>
+  <body>
+    <div class="signup-box">
+      <h2>Welcome to TeachMe</h2>
+      <p>Your peer-to-peer learning platform.</p>
+      <div class="form-button">
+        <a href="../Teach/modules/auth/login.php" class="btn">Login</a>
+        <a href="../Teach/modules/auth/signup.php" class="btn">Sign Up</a>
+      </div>
+    </div>
+  </body>
+</html>
