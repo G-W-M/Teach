@@ -22,7 +22,7 @@ function is_logged_in() {
 function require_login() {
     if (!is_logged_in()) {
         $_SESSION['redirect_url'] = $_SERVER['REQUEST_URI'];
-        header('Location: ../modules/auth/login.php');
+        header('Location: login.php');
         exit();
     }
 }
@@ -58,16 +58,21 @@ function redirect_by_role() {
     $role = $_SESSION['role'];
     switch ($role) {
         case 'admin':
-            header('Location: ../modules/admin/admin_dash.php');
+            header('Location: admin_dash.php');
             break;
         case 'tutor':
-            header('Location: ../modules/tutor/tutor_dash.php');
+            header('Location: tutor_dash.php');
             break;
         case 'learner':
-            header('Location: ../modules/learner/learner_dash.php');
+            // Check if learner needs to complete profile setup
+            if (empty($_SESSION['student_id'])) {
+                header('Location: learner_setup.php');
+            } else {
+                header('Location: learner_dash.php');
+            }
             break;
         default:
-            header('Location: ../modules/auth/login.php');
+            header('Location: login.php');
     }
     exit();
 }
@@ -109,6 +114,36 @@ function safe_session_destroy() {
 function regenerate_session() {
     if (session_status() === PHP_SESSION_ACTIVE) {
         session_regenerate_id(true);
+    }
+}
+
+// Main session check logic
+if (!is_logged_in()) {
+    // Allow access to login and signup pages without redirect
+    $allowed_pages = ['login.php', 'signup.php', 'index.php', ''];
+    $current_page = basename($_SERVER['PHP_SELF']);
+    
+    if (!in_array($current_page, $allowed_pages)) {
+        $_SESSION['redirect_url'] = $_SERVER['REQUEST_URI'];
+        header('Location: login.php');
+        exit();
+    }
+} else {
+    // For logged-in users, check if learner needs profile setup
+    if ($_SESSION['role'] === 'learner' && empty($_SESSION['student_id'])) {
+        $current_page = basename($_SERVER['PHP_SELF']);
+        $allowed_pages = ['learner_setup.php', 'logout.php'];
+        
+        if (!in_array($current_page, $allowed_pages)) {
+            header("Location: learner_setup.php");
+            exit();
+        }
+    }
+    
+    // Regenerate session ID periodically for security
+    if (!isset($_SESSION['last_regeneration']) || time() - $_SESSION['last_regeneration'] > 300) {
+        regenerate_session();
+        $_SESSION['last_regeneration'] = time();
     }
 }
 ?>

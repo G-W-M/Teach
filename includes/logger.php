@@ -5,84 +5,48 @@ function logActivity($user_id, $action, $module, $description) {
     global $conn;
 
     if (!$conn) {
-        error_log("Database connection not found in logger.php");
+        error_log("DB connection missing in logger.php");
         return false;
     }
 
-    // ✅ Handle invalid user_id (set to NULL for anonymous actions)
-    if (empty($user_id) || $user_id == 0) {
-        $user_id = null;
-    }
+    // Handle NULL / anonymous user
+    $user_id = (empty($user_id) || $user_id == 0) ? null : $user_id;
 
-    // Prepare the SQL statement
-    $stmt = $conn->prepare("
-        INSERT INTO system_logs (user_id, action, category, details, timestamp)
-        VALUES (?, ?, ?, ?, NOW())
-    ");
-
-    if (!$stmt) {
-        error_log("Failed to prepare log statement: " . $conn->error);
-        return false;
-    }
-
-    // ✅ Correct variable binding with proper NULL handling
+    // If user_id is NULL → separate SQL (MySQL can't bind NULL for integer)
     if ($user_id === null) {
-        // Bind NULL for user_id
-        $stmt->bind_param("isss", $user_id, $action, $module, $description);
-        // Explicitly set user_id to NULL since bind_param can't directly bind NULL for integers
-        $stmt->send_long_data(0, ''); // Alternative approach
+        $stmt = $conn->prepare("
+            INSERT INTO system_logs (user_id, action, category, details, time)
+            VALUES (NULL, ?, ?, ?, NOW())
+        ");
+
+        if (!$stmt) {
+            error_log("Prepare failed: " . $conn->error);
+            return false;
+        }
+
+        $stmt->bind_param("sss", $action, $module, $description);
+
     } else {
+        $stmt = $conn->prepare("
+            INSERT INTO system_logs (user_id, action, category, details, time)
+            VALUES (?, ?, ?, ?, NOW())
+        ");
+
+        if (!$stmt) {
+            error_log("Prepare failed: " . $conn->error);
+            return false;
+        }
+
         $stmt->bind_param("isss", $user_id, $action, $module, $description);
     }
 
     $result = $stmt->execute();
-    
+
     if (!$result) {
-        error_log("Failed to execute log statement: " . $stmt->error);
+        error_log("Execute failed: " . $stmt->error);
     }
-    
+
     $stmt->close();
     return $result;
-}
-
-// Alternative better approach with more robust NULL handling:
-function logActivityImproved($user_id, $action, $module, $description) {
-    global $conn;
-
-    if (!$conn) {
-        error_log("Database connection not found in logger.php");
-        return false;
-    }
-
-    // Handle NULL user_id properly
-    $user_id = (empty($user_id) || $user_id == 0) ? null : $user_id;
-
-    // Use different query for NULL user_id
-    if ($user_id === null) {
-        $stmt = $conn->prepare("
-            INSERT INTO system_logs (user_id, action, category, details, timestamp)
-            VALUES (NULL, ?, ?, ?, NOW())
-        ");
-        if ($stmt) {
-            $stmt->bind_param("sss", $action, $module, $description);
-            $result = $stmt->execute();
-            $stmt->close();
-            return $result;
-        }
-    } else {
-        $stmt = $conn->prepare("
-            INSERT INTO system_logs (user_id, action, category, details, timestamp)
-            VALUES (?, ?, ?, ?, NOW())
-        ");
-        if ($stmt) {
-            $stmt->bind_param("isss", $user_id, $action, $module, $description);
-            $result = $stmt->execute();
-            $stmt->close();
-            return $result;
-        }
-    }
-
-    error_log("Failed to prepare log statement: " . $conn->error);
-    return false;
 }
 ?>
