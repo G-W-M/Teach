@@ -34,7 +34,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     $error_msg = "Please verify your email first.";
                 } elseif ($selected_role !== $user['role']) {
                     $error_msg = "Role mismatch!";
-                } elseif (password_verify($password, $user['password_hash'])) {
+                } elseif (password_verify($password, hash: $user['password_hash'])) {
                     $_SESSION['user_id'] = $user['user_id'];
                     $_SESSION['user_name'] = $user['user_name'];
                     $_SESSION['role'] = $user['role'];

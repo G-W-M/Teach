@@ -9,7 +9,7 @@ class Database
     private $port = 3306;
     private $db_name = 'teachme';
     private $username = 'root';
-    private $password = 'maria';
+    private $password = 'postgres';
     public $conn;
 
     public function getConnection()
