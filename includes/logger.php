@@ -15,7 +15,7 @@ function logActivity($user_id, $action, $module, $description) {
     // If user_id is NULL → separate SQL (MySQL can't bind NULL for integer)
     if ($user_id === null) {
         $stmt = $conn->prepare("
-            INSERT INTO system_logs (user_id, action, category, details, time)
+            INSERT INTO system_logs (user_id, action, category, details, timestamp)
             VALUES (NULL, ?, ?, ?, NOW())
         ");
 
@@ -28,7 +28,7 @@ function logActivity($user_id, $action, $module, $description) {
 
     } else {
         $stmt = $conn->prepare("
-            INSERT INTO system_logs (user_id, action, category, details, time)
+            INSERT INTO system_logs (user_id, action, category, details, timestamp)
             VALUES (?, ?, ?, ?, NOW())
         ");
 

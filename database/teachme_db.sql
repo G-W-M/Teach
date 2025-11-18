@@ -5,7 +5,7 @@ USE teachme;
 -- 1. USERS 
 CREATE TABLE users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
-    student_id VARCHAR(20) UNIQUE,
+    student_id VARCHAR(20) NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
     user_name VARCHAR(50),
@@ -81,6 +81,8 @@ CREATE TABLE learning_requests (
     status ENUM('open','matched','completed','cancelled') DEFAULT 'open',
     matched_tutor_id INT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    preferred_schedule VARCHAR(100) AFTER description,
+    urgency VARCHAR(50) AFTER preferred_schedule;
     FOREIGN KEY (learner_id) REFERENCES users(user_id),
     FOREIGN KEY (unit_id) REFERENCES units(unit_id),
     FOREIGN KEY (matched_tutor_id) REFERENCES tutor(tutor_id)
@@ -155,4 +157,71 @@ CREATE TABLE notifications (
     related_id INT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(user_id)
+);
+
+--15. TUTOR REQUESTS
+CREATE TABLE tutoring_requests (
+    request_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    unit VARCHAR(255) NOT NULL,
+    assigned_tutor VARCHAR(255) DEFAULT NULL,
+    status VARCHAR(50) DEFAULT 'Open',
+    submitted_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    form_data TEXT NULL
+);
+
+--16.LEARNER PROFILES
+CREATE TABLE IF NOT EXISTS learner_profiles (
+    profile_id INT AUTO_INCREMENT PRIMARY KEY,
+    learner_id INT NOT NULL,
+    user_id INT NOT NULL,
+    year_of_study VARCHAR(20),
+    faculty VARCHAR(100),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (learner_id) REFERENCES users(user_id),
+    UNIQUE KEY unique_learner (user_id)
+);
+
+--17. TEST QUESTIONS
+CREATE TABLE test_questions (
+    question_id INT AUTO_INCREMENT PRIMARY KEY,
+    unit_id INT NOT NULL,
+    question_text TEXT NOT NULL,
+    option_1 VARCHAR(255) NOT NULL,
+    option_2 VARCHAR(255) NOT NULL,
+    option_3 VARCHAR(255) NOT NULL,
+    option_4 VARCHAR(255) NOT NULL,
+    correct_option INT NOT NULL CHECK (correct_option BETWEEN 1 AND 4),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (unit_id) REFERENCES units(unit_id) ON DELETE CASCADE
+);
+--18. TUTOR TESTS
+
+CREATE TABLE tutor_tests (
+    test_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    unit_id INT NOT NULL,
+    score INT NOT NULL,
+    total_questions INT NOT NULL,
+    passed BOOLEAN NOT NULL,
+    taken_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (unit_id) REFERENCES units(unit_id) ON DELETE CASCADE
+);
+
+-- 19. TUTOR PROFILES
+CREATE TABLE IF NOT EXISTS tutor_profiles (
+    profile_id INT AUTO_INCREMENT PRIMARY KEY,
+    tutor_id INT NOT NULL,               -- links to users.user_id
+    bio TEXT,
+    rating DECIMAL(3,2) DEFAULT 0,
+    current_students INT DEFAULT 0,
+    max_students INT DEFAULT 3,
+    status ENUM('active','inactive','suspended') DEFAULT 'active',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (tutor_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    UNIQUE (tutor_id)
 );

@@ -8,57 +8,56 @@ $error_msg = '';
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $email = trim($_POST["email"] ?? '');
     $password = trim($_POST["password"] ?? '');
-    $selected_role = trim($_POST["role"] ?? '');
 
-    if (empty($email) || empty($password) || empty($selected_role)) {
-        $error_msg = "All fields are required.";
+    if (empty($email) || empty($password)) {
+        $error_msg = "Email and password are required.";
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $error_msg = "Invalid email format.";
     } elseif (!preg_match('/@strathmore\.edu$/', $email)) {
         $error_msg = "Only Strathmore University emails are allowed.";
     } else {
+
         $stmt = $conn->prepare("
             SELECT user_id, user_name, email, password_hash, role, is_active
             FROM users
             WHERE email = ?
         ");
-        if ($stmt) {
-            $stmt->bind_param("s", $email);
-            $stmt->execute();
-            $result = $stmt->get_result();
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
 
-            if ($result->num_rows === 1) {
-                $user = $result->fetch_assoc();
+        $result = $stmt->get_result();
 
-                if (!$user['is_active']) {
-                    $error_msg = "Please verify your email first.";
-                } elseif ($selected_role !== $user['role']) {
-                    $error_msg = "Role mismatch!";
-                } elseif (password_verify($password, hash: $user['password_hash'])) {
-                    $_SESSION['user_id'] = $user['user_id'];
-                    $_SESSION['user_name'] = $user['user_name'];
-                    $_SESSION['role'] = $user['role'];
-                    $_SESSION['email'] = $user['email'];
+        if ($result->num_rows === 1) {
+            $user = $result->fetch_assoc();
 
-                    logActivity($user['user_id'], "LOGIN", "Authentication", "Successful login");
+            if (!$user['is_active']) {
+                $error_msg = "Please verify your email first.";
+            } elseif (password_verify($password, $user['password_hash'])) {
 
-                    // Redirect by role
-                    switch ($user['role']) {
-                        case "admin": header("Location: ../admin/admin_dash.php"); break;
-                        case "tutor": header("Location: ../tutor/tutor_dash.php"); break;
-                        default: header("Location: ../learner/learner_dash.php"); break;
-                    }
-                    exit;
+                $_SESSION['user_id'] = $user['user_id'];
+                $_SESSION['user_name'] = $user['user_name'];
+                $_SESSION['role'] = $user['role'];
+                $_SESSION['email'] = $user['email'];
+
+                logActivity($user['user_id'], "LOGIN", "Authentication", "Successful login");
+
+                // Redirect by role
+                if ($user['role'] === "admin") {
+                    header("Location: ../admin/admin_dash.php");
+                } elseif ($user['role'] === "tutor") {
+                    header("Location: ../tutor/tutor_dash.php");
                 } else {
-                    $error_msg = "Incorrect password.";
+                    header("Location: ../learner/learner_dash.php");
                 }
+                exit();
             } else {
-                $error_msg = "Account not found.";
+                $error_msg = "Incorrect password.";
             }
-            $stmt->close();
         } else {
-            $error_msg = "Database error. Please try again.";
+            $error_msg = "Account not found.";
         }
+
+        $stmt->close();
     }
 }
 ?>
@@ -75,29 +74,21 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <div class="login-box">
         <h2>Login</h2>
 
-        <?php if (!empty($error_msg)): ?>
-            <div class="error" style="color:red; margin-bottom:10px; padding:10px; background:#f8d7da; border-radius:5px;">
-                <?php echo htmlspecialchars($error_msg); ?>
-            </div>
+        <?php if ($error_msg): ?>
+            <div class="error"><?php echo $error_msg; ?></div>
         <?php endif; ?>
 
-        <form method="POST" action="">
-            <input type="email" name="email" placeholder="Email" value="<?php echo htmlspecialchars($_POST['email'] ?? ''); ?>" required>
+        <form method="POST">
+            <input type="email" name="email" placeholder="Email" required>
             <input type="password" name="password" placeholder="Password" required>
 
-            <select name="role" required>
-                <option value="">-- Select Role --</option>
-                <option value="learner" <?php echo (($_POST['role'] ?? '')=='learner')?'selected':''; ?>>Learner</option>
-                <option value="tutor" <?php echo (($_POST['role'] ?? '')=='tutor')?'selected':''; ?>>Tutor</option>
-                <option value="admin" <?php echo (($_POST['role'] ?? '')=='admin')?'selected':''; ?>>Admin</option>
-            </select>
+            <!-- ❌ REMOVED ROLE DROPDOWN -->
+            <!-- LOGIN auto-detects role from DB now -->
 
             <button type="submit" class="form-button">Login</button>
         </form>
 
-        <p class="login-link">
-            Don't have an account? <a href="signup.php">Sign Up</a>
-        </p>
+        <p class="login-link">Don't have an account? <a href="signup.php">Sign Up</a></p>
     </div>
 </div>
 </body>

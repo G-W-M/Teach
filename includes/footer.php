@@ -1,27 +1,34 @@
-        </main>
-    </div>
+if (!isset($_SESSION)) {
+    session_start();
+}
+?>
 
-    <?php if (isset($_SESSION['user_id'])): ?>
-    <footer class="main-footer">
-        <div class="container">
-            <div class="footer-content">
-                <p>&copy; <?php echo date('Y'); ?> TeachMe Peer Tutoring System. All rights reserved.</p>
-                <div class="footer-links">
-                    <a href="#">Privacy Policy</a>
-                    <a href="#">Terms of Service</a>
-                    <a href="#">Contact Support</a>
-                </div>
-            </div>
-        </div>
-    </footer>
-    <?php endif; ?>
+<footer class="main-footer" style="
+    margin-top:auto; 
+    padding:20px; 
+    background:#003366; 
+    color:#fff; 
+    text-align:center; 
+    font-size:14px;
+    position:fixed;
+    bottom:0;
+    left:0;
+    width:100%;
+    z-index:1000;
+">
+    <p>&copy; <?php echo date('Y'); ?> TeachMe Platform | All Rights Reserved</p>
+</footer>
 
-    <!-- Notification System -->
-    <div id="notification-container" class="notification-container"></div>
+<!-- Optional custom CSS -->
+<link rel="stylesheet" href="../../assets/css/tutor.css">
 
-    <!-- Loading Spinner -->
-    <div id="loading-spinner" class="loading-spinner" style="display: none;">
-        <div class="spinner"></div>
-    </div>
+<!-- Global Scripts -->
+<script src="/assets/js/main.js"></script>
+<script src="/assets/js/notification.js"></script>
+<script src="/assets/js/validation.js"></script>
+
+<!-- Bootstrap Bundle (JS + Popper) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>
