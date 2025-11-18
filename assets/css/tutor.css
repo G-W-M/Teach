@@ -13,7 +13,7 @@ body.tutor-body {
 
 .tutor-card {
     background-color: rgba(255,255,255,0.95);
-    border-left: 4px solid #0059b3;
+    border-left: 4px solid  #003366;
     padding: 15px;
     margin-bottom: 15px;
     border-radius: 10px;
@@ -21,4 +21,315 @@ body.tutor-body {
 
 .tutor-card h3 {
     color: #003366;
+}
+
+
+/* Basic styling — relies on tutor.css for full design */
+.tutor-nav {
+    background: #003366;
+    padding: 12px;
+}
+
+.tutor-nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 18px;
+}
+
+.tutor-nav a {
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 6px 10px;
+}
+
+.tutor-nav a:hover {
+    background: #003366;
+    border-radius: 6px;
+}
+/* ===== TUTOR BUTTON STYLES ===== */
+
+/* Base Button Styles */
+.tutor-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    text-align: center;
+    gap: 8px;
+    min-width: 120px;
+    position: relative;
+    overflow: hidden;
+}
+
+.tutor-btn:focus {
+    outline: 2px solid #003366;
+    outline-offset: 2px;
+}
+
+.tutor-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+/* Primary Button - Inspired by tutor-header */
+.tutor-btn-primary {
+    background: linear-gradient(135deg, #003366 0%, #004080 100%);
+    color: white;
+    border: 2px solid #003366;
+    box-shadow: 0 2px 4px rgba(0, 51, 102, 0.2);
+}
+
+.tutor-btn-primary:hover:not(:disabled) {
+    background: linear-gradient(135deg, #002244 0%, #003366 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 51, 102, 0.3);
+}
+
+.tutor-btn-primary:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(0, 51, 102, 0.2);
+}
+
+/* Secondary Button - Inspired by tutor-card border */
+.tutor-btn-secondary {
+    background: transparent;
+    color: #003366;
+    border: 2px solid #003366;
+    font-weight: 600;
+}
+
+.tutor-btn-secondary:hover:not(:disabled) {
+    background: #003366;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 51, 102, 0.2);
+}
+
+/* Success Button - For positive actions */
+.tutor-btn-success {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+    border: 2px solid #28a745;
+}
+
+.tutor-btn-success:hover:not(:disabled) {
+    background: linear-gradient(135deg, #218838 0%, #1e9e8a 100%);
+    transform: translateY(-2px);
+}
+
+/* Warning Button - For alerts */
+.tutor-btn-warning {
+    background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+    color: #212529;
+    border: 2px solid #ffc107;
+}
+
+.tutor-btn-warning:hover:not(:disabled) {
+    background: linear-gradient(135deg, #e0a800 0%, #e36407 100%);
+    transform: translateY(-2px);
+}
+
+/* Danger Button - For destructive actions */
+.tutor-btn-danger {
+    background: linear-gradient(135deg, #dc3545 0%, #e83e8c 100%);
+    color: white;
+    border: 2px solid #dc3545;
+}
+
+.tutor-btn-danger:hover:not(:disabled) {
+    background: linear-gradient(135deg, #c82333 0%, #d91a7a 100%);
+    transform: translateY(-2px);
+}
+
+/* Outline Variants */
+.tutor-btn-outline-primary {
+    background: transparent;
+    color: #003366;
+    border: 2px solid #003366;
+}
+
+.tutor-btn-outline-primary:hover:not(:disabled) {
+    background: #003366;
+    color: white;
+}
+
+/* Ghost Buttons - Minimal style */
+.tutor-btn-ghost {
+    background: transparent;
+    color: #003366;
+    border: 1px solid transparent;
+    font-weight: 500;
+}
+
+.tutor-btn-ghost:hover:not(:disabled) {
+    background: rgba(0, 51, 102, 0.1);
+    border-color: rgba(0, 51, 102, 0.2);
+}
+
+/* Button Sizes */
+.tutor-btn-sm {
+    padding: 8px 16px;
+    font-size: 12px;
+    min-width: 100px;
+    border-radius: 6px;
+}
+
+.tutor-btn-lg {
+    padding: 14px 28px;
+    font-size: 16px;
+    min-width: 140px;
+    border-radius: 10px;
+}
+
+.tutor-btn-xl {
+    padding: 18px 36px;
+    font-size: 18px;
+    min-width: 160px;
+    border-radius: 12px;
+}
+
+/* Full Width Button */
+.tutor-btn-block {
+    width: 100%;
+    display: flex;
+}
+
+/* Icon Buttons */
+.tutor-btn-icon {
+    width: 40px;
+    height: 40px;
+    min-width: auto;
+    padding: 0;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tutor-btn-icon.tutor-btn-sm {
+    width: 32px;
+    height: 32px;
+}
+
+.tutor-btn-icon.tutor-btn-lg {
+    width: 48px;
+    height: 48px;
+}
+
+/* Button Groups */
+.tutor-btn-group {
+    display: inline-flex;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.tutor-btn-group .tutor-btn {
+    border-radius: 0;
+    margin: 0;
+    border-right: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.tutor-btn-group .tutor-btn:last-child {
+    border-right: none;
+}
+
+.tutor-btn-group .tutor-btn-secondary {
+    border-right: 1px solid #003366;
+}
+
+/* Loading State */
+.tutor-btn-loading {
+    color: transparent !important;
+    pointer-events: none;
+}
+
+.tutor-btn-loading::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border: 2px solid transparent;
+    border-top: 2px solid currentColor;
+    border-radius: 50%;
+    animation: tutor-spin 1s linear infinite;
+}
+
+@keyframes tutor-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Floating Action Button */
+.tutor-btn-fab {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    min-width: auto;
+    padding: 0;
+    box-shadow: 0 4px 12px rgba(0, 51, 102, 0.3);
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 1000;
+}
+
+.tutor-btn-fab:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 6px 16px rgba(0, 51, 102, 0.4);
+}
+
+/* Specialized Tutor Buttons */
+.tutor-btn-session {
+    background: linear-gradient(135deg, #003366 0%, #0066cc 100%);
+    color: white;
+    border: none;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.tutor-btn-apply {
+    background: linear-gradient(135deg, #28a745 0%, #003366 100%);
+    color: white;
+    border: none;
+    font-weight: 600;
+}
+
+.tutor-btn-test {
+    background: linear-gradient(135deg, #ffc107 0%, #003366 100%);
+    color: white;
+    border: none;
+    font-weight: 600;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .tutor-btn {
+        padding: 12px 20px;
+        font-size: 14px;
+        min-width: 110px;
+    }
+    
+    .tutor-btn-block-mobile {
+        width: 100%;
+    }
+    
+    .tutor-btn-fab {
+        width: 52px;
+        height: 52px;
+        bottom: 20px;
+        right: 20px;
+    }
 }
