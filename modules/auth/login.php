@@ -47,7 +47,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 } elseif ($user['role'] === "tutor") {
                     header("Location: ../tutor/tutor_dash.php");
                 } else {
-                    header("Location: ../learner/learner_dash.php");
+                    header("Location: ../learner/learner_setup.php");
                 }
                 exit();
             } else {

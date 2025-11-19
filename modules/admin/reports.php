@@ -3,8 +3,16 @@ session_start();
 require_once '../../includes/session_check.php';
 require_once '../../database/conf.php';
 
-// Example report data
-$report_data = $conn->query("SELECT unit_id, COUNT(*) AS total_requests FROM learning_requests GROUP BY unit_id");
+// Fetch report data
+$query = "
+    SELECT 
+        unit_id,
+        COUNT(*) AS total_requests
+    FROM learning_requests
+    GROUP BY unit_id
+";
+
+$report_data = $conn->query($query);
 ?>
 
 <!DOCTYPE html>
@@ -12,42 +20,45 @@ $report_data = $conn->query("SELECT unit_id, COUNT(*) AS total_requests FROM lea
 <head>
 <meta charset="UTF-8">
 <title>Reports - Admin</title>
+<!-- Flatly Bootswatch CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.0/dist/flatly/bootstrap.min.css">
+    
+    <!-- Optional custom CSS -->
+    <link rel="stylesheet" href="../../assets/css/admin.css">
+
+    <!-- Bootstrap Bundle (JS + Popper) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </head>
-<body style="margin:0; font-family:Arial,sans-serif; background:#f4f6f8;">
 
-<nav style="background:#003366; color:white; padding:1rem; display:flex; justify-content:space-between; align-items:center;">
-    <div style="font-weight:bold;">Welcome, <?php echo htmlspecialchars($_SESSION['user_name']); ?></div>
-    <div>
-        <a href="admin_dash.php" style="color:white; margin:0 10px; text-decoration:none; font-weight:600;">Dashboard</a>
-        <a href="manage_tutors.php" style="color:white; margin:0 10px; text-decoration:none; font-weight:600;">Manage Tutors</a>
-        <a href="manage_sessions.php" style="color:white; margin:0 10px; text-decoration:none; font-weight:600;">Sessions</a>
-        <a href="manage_feedback.php" style="color:white; margin:0 10px; text-decoration:none; font-weight:600;">Feedback</a>
-        <a href="reports.php" style="color:white; margin:0 10px; text-decoration:none; font-weight:600;">Reports</a>
-        <a href="certificates.php" style="color:white; margin:0 10px; text-decoration:none; font-weight:600;">Certificates</a>
-        <a href="system_logs.php" style="color:white; margin:0 10px; text-decoration:none; font-weight:600;">System Logs</a>
-        <a href="logout.php" style="color:white; margin:0 10px; text-decoration:none; font-weight:600;">Logout</a>
-    </div>
-</nav>
+<body>
 
-<div style="max-width:1400px; margin:2rem auto; padding:2rem;">
-    <h2 style="color:#0059b3;">Reports</h2>
-    <table style="width:100%; border-collapse:collapse; margin-top:20px; background:white; border-radius:12px; overflow:hidden;">
+<?php include 'admin_nav.php'; ?>
+
+<div class="wrapper">
+
+    <h2>Reports</h2>
+
+    <table>
         <thead>
-            <tr style="background:#3498db; color:white;">
-                <th style="padding:10px;">Unit ID</th>
-                <th style="padding:10px;">Total Requests</th>
+            <tr>
+                <th>Unit ID</th>
+                <th>Total Requests</th>
             </tr>
         </thead>
+
         <tbody>
         <?php while($row = $report_data->fetch_assoc()): ?>
-            <tr style="text-align:center; border-bottom:1px solid #eee;">
-                <td style="padding:10px;"><?php echo $row['unit_id']; ?></td>
-                <td style="padding:10px;"><?php echo $row['total_requests']; ?></td>
+            <tr>
+                <td><?php echo $row['unit_id']; ?></td>
+                <td><?php echo $row['total_requests']; ?></td>
             </tr>
         <?php endwhile; ?>
         </tbody>
+
     </table>
+
 </div>
+
 </body>
 </html>
-<?php require_once "../../includes/admin_footer.php"; ?>
+

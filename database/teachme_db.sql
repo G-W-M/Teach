@@ -117,14 +117,14 @@ CREATE TABLE session_attendance (
 CREATE TABLE feedback (
     feedback_id INT AUTO_INCREMENT PRIMARY KEY,
     session_id INT NOT NULL,
-    from_user INT NOT NULL,
-    to_user INT NOT NULL,
+    learner_id INT NOT NULL,
+    tutor_id INT NOT NULL,
     rating INT CHECK (rating BETWEEN 1 AND 5),
     comments TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (session_id) REFERENCES sessions(session_id),
-    FOREIGN KEY (from_user) REFERENCES users(user_id),
-    FOREIGN KEY (to_user) REFERENCES users(user_id)
+    FOREIGN KEY (learner_id) REFERENCES users(user_id),
+    FOREIGN KEY (tutor_id) REFERENCES users(user_id)
 );
 
 -- 12. CERTIFICATES 
@@ -225,3 +225,37 @@ CREATE TABLE IF NOT EXISTS tutor_profiles (
     FOREIGN KEY (tutor_id) REFERENCES users(user_id) ON DELETE CASCADE,
     UNIQUE (tutor_id)
 );
+CREATE TABLE IF NOT EXISTS tutor_competencies (
+    competency_id INT AUTO_INCREMENT PRIMARY KEY,
+    tutor_id INT NOT NULL,
+    unit_id INT NOT NULL,
+    FOREIGN KEY (tutor_id) REFERENCES tutor(tutor_id) ON DELETE CASCADE,
+    FOREIGN KEY (unit_id) REFERENCES units(unit_id) ON DELETE CASCADE,
+    UNIQUE (tutor_id, unit_id)
+);
+
+SET FOREIGN_KEY_CHECKS = 0;
+
+TRUNCATE TABLE admin;
+TRUNCATE TABLE tutor;
+TRUNCATE TABLE tutor_profiles;
+TRUNCATE TABLE tutor_availability;
+TRUNCATE TABLE tutor_competencies;
+TRUNCATE TABLE tutor_applications;
+TRUNCATE TABLE tutor_tests;
+
+TRUNCATE TABLE learner_profiles;
+
+TRUNCATE TABLE learning_requests;
+TRUNCATE TABLE sessions;
+TRUNCATE TABLE session_attendance;
+TRUNCATE TABLE feedback;
+TRUNCATE TABLE certificates;
+TRUNCATE TABLE system_logs;
+TRUNCATE TABLE notifications;
+TRUNCATE TABLE tutoring_requests;
+
+
+TRUNCATE TABLE users;
+
+SET FOREIGN_KEY_CHECKS = 1;

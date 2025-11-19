@@ -3,7 +3,7 @@ session_start();
 require_once '../../includes/session_check.php';
 require_once '../../database/conf.php';
 
-// Fetch sessions
+// Fetch sessions with tutor and learner names
 $result = $conn->query("
     SELECT s.session_id, u.user_name AS learner, t.user_name AS tutor, s.session_date, s.start_time, s.end_time, s.status
     FROM sessions s
@@ -18,51 +18,51 @@ $result = $conn->query("
 <head>
 <meta charset="UTF-8">
 <title>Manage Sessions - Admin</title>
+
+<!-- Bootswatch Flatly CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.0/dist/flatly/bootstrap.min.css">
+
+<!-- Optional custom CSS -->
+<link rel="stylesheet" href="../../assets/css/admin.css">
+
+<!-- Bootstrap Bundle (JS + Popper) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 </head>
-<body style="margin:0; font-family:Arial,sans-serif; background:#f4f6f8;">
+<body>
 
-<nav style="background:#003366; color:white; padding:1rem; display:flex; justify-content:space-between; align-items:center;">
-    <div style="font-weight:bold;">Welcome, <?php echo htmlspecialchars($_SESSION['user_name']); ?></div>
-    <div>
-        <a href="admin_dash.php" style="color:white; margin:0 10px; text-decoration:none; font-weight:600;">Dashboard</a>
-        <a href="manage_tutors.php" style="color:white; margin:0 10px; text-decoration:none; font-weight:600;">Manage Tutors</a>
-        <a href="manage_sessions.php" style="color:white; margin:0 10px; text-decoration:none; font-weight:600;">Sessions</a>
-        <a href="manage_feedback.php" style="color:white; margin:0 10px; text-decoration:none; font-weight:600;">Feedback</a>
-        <a href="reports.php" style="color:white; margin:0 10px; text-decoration:none; font-weight:600;">Reports</a>
-        <a href="certificates.php" style="color:white; margin:0 10px; text-decoration:none; font-weight:600;">Certificates</a>
-        <a href="system_logs.php" style="color:white; margin:0 10px; text-decoration:none; font-weight:600;">System Logs</a>
-        <a href="logout.php" style="color:white; margin:0 10px; text-decoration:none; font-weight:600;">Logout</a>
-    </div>
-</nav>
+<?php include 'admin_nav.php'; ?>
 
-<div style="max-width:1400px; margin:2rem auto; padding:2rem;">
-    <h2 style="color:#0059b3;">Manage Sessions</h2>
-    <table style="width:100%; border-collapse:collapse; margin-top:20px; background:white; border-radius:12px; overflow:hidden;">
+<div class="table-wrapper">
+    <h2>Manage Sessions</h2>
+
+    <table class="table table-hover">
         <thead>
-            <tr style="background:#3498db; color:white;">
-                <th style="padding:10px;">Session ID</th>
-                <th style="padding:10px;">Learner</th>
-                <th style="padding:10px;">Tutor</th>
-                <th style="padding:10px;">Date</th>
-                <th style="padding:10px;">Start</th>
-                <th style="padding:10px;">End</th>
-                <th style="padding:10px;">Status</th>
+            <tr>
+                <th>Session ID</th>
+                <th>Learner</th>
+                <th>Tutor</th>
+                <th>Date</th>
+                <th>Start</th>
+                <th>End</th>
+                <th>Status</th>
             </tr>
         </thead>
         <tbody>
         <?php while($row = $result->fetch_assoc()): ?>
-            <tr style="text-align:center; border-bottom:1px solid #eee;">
-                <td style="padding:10px;"><?php echo $row['session_id']; ?></td>
-                <td style="padding:10px;"><?php echo htmlspecialchars($row['learner']); ?></td>
-                <td style="padding:10px;"><?php echo htmlspecialchars($row['tutor']); ?></td>
-                <td style="padding:10px;"><?php echo date('F j, Y', strtotime($row['session_date'])); ?></td>
-                <td style="padding:10px;"><?php echo date('g:i A', strtotime($row['start_time'])); ?></td>
-                <td style="padding:10px;"><?php echo date('g:i A', strtotime($row['end_time'])); ?></td>
-                <td style="padding:10px;"><?php echo ucfirst($row['status']); ?></td>
+            <tr>
+                <td><?php echo $row['session_id']; ?></td>
+                <td><?php echo htmlspecialchars($row['learner']); ?></td>
+                <td><?php echo htmlspecialchars($row['tutor']); ?></td>
+                <td><?php echo date('F j, Y', strtotime($row['session_date'])); ?></td>
+                <td><?php echo date('g:i A', strtotime($row['start_time'])); ?></td>
+                <td><?php echo date('g:i A', strtotime($row['end_time'])); ?></td>
+                <td><?php echo ucfirst($row['status']); ?></td>
             </tr>
         <?php endwhile; ?>
         </tbody>
     </table>
 </div>
+
 </body>
 </html>

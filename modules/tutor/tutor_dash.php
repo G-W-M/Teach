@@ -95,7 +95,6 @@ $q3->close();
 
     <!-- Action Buttons -->
     <div class="mt-5 text-center">
-        <a href="manage_competencies.php" class="btn btn-primary btn-lg me-2 mb-2">Manage Competencies</a>
         <a href="assigned_learners.php" class="btn btn-success btn-lg me-2 mb-2">View Learners</a>
         <a href="tutor_profile.php" class="btn btn-warning btn-lg mb-2">Edit Profile</a>
     </div>

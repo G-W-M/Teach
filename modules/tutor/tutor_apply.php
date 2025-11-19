@@ -85,7 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <?php } ?>
             </select>
 
-            <button type="submit" class="tutor-btn tutor-btn-primary tutor-btn-block">Submit Application</button>
+            <button type="submit" class="tutor-btn tutor-btn-primary tutor-btn-block"> Take Test</button>
         </form>
     </div>
 </div>

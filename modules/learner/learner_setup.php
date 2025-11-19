@@ -2,11 +2,6 @@
 require_once '../../includes/session_check.php';
 require_once '../../database/conf.php';
 
-// Check if user is learner
-if (!has_role('learner')) {
-    header("Location: ../../index.php");
-    exit();
-}
 
 $user_id = get_current_user_id();
 $message = '';
@@ -88,145 +83,142 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['setup_profile'])) {
     <title>Complete Your Profile - TeachMe</title>
     <link rel="stylesheet" href="../../assets/css/main.css">
     <style>
-        .setup-container {
-            min-height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+        }
+
+        body {
+            height: 100vh;
+            width: 100%;
+            background: url('../../assets/img/bg.jpeg') no-repeat center center;
+            background-size: 400px; 
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
-        }
-
-        .setup-card {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            width: 100%;
-            max-width: 500px;
+            position: relative;
             overflow: hidden;
         }
 
-        .setup-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 30px;
+        /* WRAPPER FOR CENTERING AUTH FORMS */
+        .setup-wrapper {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* AUTH CONTAINER BOX */
+        .setup-box {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 40px 50px;
+            border-radius: 16px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
             text-align: center;
+            width: 420px;
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
-        .setup-logo {
-            height: 50px;
-            margin-bottom: 15px;
-        }
-
-        .setup-header h1 {
-            margin: 0 0 10px 0;
-            font-size: 24px;
-        }
-
-        .setup-header p {
-            margin: 0;
-            opacity: 0.9;
-        }
-
-        .setup-form {
-            padding: 30px;
-        }
-
-        .form-group {
+        .setup-box h2 {
             margin-bottom: 20px;
+            color: #003366;
         }
 
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #333;
-        }
-
-        .form-group input,
-        .form-group select {
+        /* INPUT FIELDS */
+        input, select {
             width: 100%;
-            padding: 12px;
-            border: 2px solid #e1e8ed;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
             border-radius: 8px;
-            font-size: 16px;
-            transition: border-color 0.3s;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus {
             outline: none;
-            border-color: #3498db;
+            font-size: 15px;
         }
 
-        .btn-large {
-            width: 100%;
-            padding: 15px;
-            background: #27ae60;
+        /* BUTTON */
+        .form-button {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 15px 0;
+            background-color: #003366;
             color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: 500;
             border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
+            width: 100%;
             cursor: pointer;
-            transition: background 0.3s;
         }
 
-        .btn-large:hover {
-            background: #229954;
+        .form-button:hover {
+            background-color: #0059b3;
         }
 
-        .alert {
-            padding: 15px;
-            margin: 20px;
-            border-radius: 8px;
+        /* ERROR MESSAGE */
+        .error {
+            color: red;
+            margin-bottom: 10px;
+            font-size: 14px;
             text-align: center;
-        }
-
-        .alert-error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
         }
 
         .setup-notice {
             background: #e7f3ff;
             border-radius: 8px;
-            padding: 20px;
-            margin: 20px 0;
+            padding: 15px;
+            margin: 15px 0;
             border-left: 4px solid #1890ff;
+            text-align: left;
         }
 
         .setup-notice h4 {
             margin: 0 0 10px 0;
             color: #1890ff;
+            font-size: 14px;
         }
 
         .setup-notice ul {
             margin: 0;
             padding-left: 20px;
+            font-size: 13px;
         }
 
         .setup-notice li {
             margin: 5px 0;
             color: #0056b3;
         }
+
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #333;
+        }
     </style>
 </head>
 <body>
-    <div class="setup-container">
-        <div class="setup-card">
-            <div class="setup-header">
-                <img src="../../assets/img/bg.jpeg" alt="Strathmore University" class="setup-logo">
-                <h1>Complete Your Profile</h1>
-                <p>Welcome to Strathmore University TeachMe</p>
-            </div>
+    <div class="setup-wrapper">
+        <div class="setup-box">
+            <h2>Complete Your Profile</h2>
+            <p style="margin-bottom: 20px; color: #666;">Welcome to Strathmore University TeachMe</p>
 
             <?php if ($message && $message !== 'success'): ?>
-                <div class="alert alert-error"><?php echo htmlspecialchars($message); ?></div>
+                <p class="error"><?php echo htmlspecialchars($message); ?></p>
             <?php endif; ?>
 
-            <form method="POST" class="setup-form">
+            <form method="POST" action="">
                 <div class="form-group">
                     <label for="student_id">Admission Number *</label>
                     <input type="text" id="student_id" name="student_id" 
@@ -281,7 +273,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['setup_profile'])) {
                     </ul>
                 </div>
 
-                <button type="submit" name="setup_profile" class="btn-large">
+                <button type="submit" name="setup_profile" class="form-button">
                     Complete Setup & Continue
                 </button>
             </form>

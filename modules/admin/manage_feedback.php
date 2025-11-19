@@ -1,66 +1,129 @@
 <?php
-session_start();
-require_once '../../includes/session_check.php';
 require_once '../../database/conf.php';
+require_once '../../includes/session_check.php';
 
-// Fetch feedback
-$result = $conn->query("
-    SELECT f.feedback_id, u1.user_name AS from_user, u2.user_name AS to_user, f.rating, f.comments, f.created_at
-    FROM feedback f
-    JOIN users u1 ON f.from_user = u1.user_id
-    JOIN users u2 ON f.to_user = u2.user_id
+// --- CHECK LOGIN ---
+if (!is_logged_in()) {
+    header("Location: ../../auth/login.php");
+    exit();
+}
+
+// --- READ SESSION ID ---
+$session_id = isset($_GET['session_id']) ? intval($_GET['session_id']) : 0;
+
+// --- GET SESSION DETAILS ---
+$stmt = $conn->prepare("
+    SELECT s.*, u.username AS tutor_name
+    FROM sessions s
+    JOIN users u ON s.tutor_id = u.user_id
+    WHERE s.session_id = ?
 ");
-?>
+$stmt->bind_param("i", $session_id);
+$stmt->execute();
+$session = $stmt->get_result()->fetch_assoc();
 
+if (!$session) {
+    die("Session not found.");
+}
+
+// --- HANDLE SUBMISSION ---
+$message = "";
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $rating = intval($_POST['rating']);
+    $comments = trim($_POST['comments']);
+    $learner_id = $_SESSION['user_id'];
+    $tutor_id = $session['tutor_id'];
+
+    if ($rating < 1 || $rating > 5) {
+        $message = "Invalid rating!";
+    } else {
+        $stmt = $conn->prepare("
+            INSERT INTO feedback (session_id, learner_id, tutor_id, rating, comments)
+            VALUES (?, ?, ?, ?, ?)
+        ");
+
+        $stmt->bind_param("iiiis", $session_id, $learner_id, $tutor_id, $rating, $comments);
+
+        if ($stmt->execute()) {
+            $message = "Feedback submitted successfully!";
+        } else {
+            $message = "Error saving feedback.";
+        }
+    }
+}
+
+// --- GET PAST FEEDBACK ---
+$feedback_stmt = $conn->prepare("
+    SELECT f.*, u.username AS learner_name
+    FROM feedback f
+    JOIN users u ON f.learner_id = u.user_id
+    WHERE f.session_id = ?
+    ORDER BY f.created_at DESC
+");
+$feedback_stmt->bind_param("i", $session_id);
+$feedback_stmt->execute();
+$feedback_list = $feedback_stmt->get_result();
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Manage Feedback - Admin</title>
+    <meta charset="UTF-8">
+    <title>Session Feedback</title>
+    <link rel="stylesheet" href="../../assets/css/tutor.css">
 </head>
-<body style="margin:0; font-family:Arial,sans-serif; background:#f4f6f8;">
+<body>
 
-<nav style="background:#003366; color:white; padding:1rem; display:flex; justify-content:space-between; align-items:center;">
-    <div style="font-weight:bold;">Welcome, <?php echo htmlspecialchars($_SESSION['user_name']); ?></div>
-    <div>
-        <a href="admin_dash.php" style="color:white; margin:0 10px; text-decoration:none; font-weight:600;">Dashboard</a>
-        <a href="manage_tutors.php" style="color:white; margin:0 10px; text-decoration:none; font-weight:600;">Manage Tutors</a>
-        <a href="manage_sessions.php" style="color:white; margin:0 10px; text-decoration:none; font-weight:600;">Sessions</a>
-        <a href="manage_feedback.php" style="color:white; margin:0 10px; text-decoration:none; font-weight:600;">Feedback</a>
-        <a href="reports.php" style="color:white; margin:0 10px; text-decoration:none; font-weight:600;">Reports</a>
-        <a href="certificates.php" style="color:white; margin:0 10px; text-decoration:none; font-weight:600;">Certificates</a>
-        <a href="system_logs.php" style="color:white; margin:0 10px; text-decoration:none; font-weight:600;">System Logs</a>
-        <a href="logout.php" style="color:white; margin:0 10px; text-decoration:none; font-weight:600;">Logout</a>
+<div class="container">
+    <h2>Feedback for Session: <?= htmlspecialchars($session['topic']) ?></h2>
+
+    <?php if (!empty($message)): ?>
+        <p style="color: green;"><?= $message ?></p>
+    <?php endif; ?>
+
+    <!-- SUBMIT FEEDBACK -->
+    <div class="card">
+        <h3>Leave Your Feedback</h3>
+
+        <form method="POST">
+            <label>Rating (1–5)</label>
+            <select name="rating" required>
+                <option value="">Select Rating</option>
+                <?php for ($i=1; $i<=5; $i++): ?>
+                    <option value="<?= $i ?>"><?= $i ?></option>
+                <?php endfor; ?>
+            </select>
+
+            <label>Comments</label>
+            <textarea name="comments" placeholder="Say something helpful..." rows="4"></textarea>
+
+            <button type="submit">Submit Feedback</button>
+        </form>
     </div>
-</nav>
 
-<div style="max-width:1400px; margin:2rem auto; padding:2rem;">
-    <h2 style="color:#0059b3;">Manage Feedback</h2>
-    <table style="width:100%; border-collapse:collapse; margin-top:20px; background:white; border-radius:12px; overflow:hidden;">
-        <thead>
-            <tr style="background:#3498db; color:white;">
-                <th style="padding:10px;">ID</th>
-                <th style="padding:10px;">From</th>
-                <th style="padding:10px;">To</th>
-                <th style="padding:10px;">Rating</th>
-                <th style="padding:10px;">Comments</th>
-                <th style="padding:10px;">Date</th>
-            </tr>
-        </thead>
-        <tbody>
-        <?php while($row = $result->fetch_assoc()): ?>
-            <tr style="text-align:center; border-bottom:1px solid #eee;">
-                <td style="padding:10px;"><?php echo $row['feedback_id']; ?></td>
-                <td style="padding:10px;"><?php echo htmlspecialchars($row['from_user']); ?></td>
-                <td style="padding:10px;"><?php echo htmlspecialchars($row['to_user']); ?></td>
-                <td style="padding:10px;"><?php echo $row['rating']; ?></td>
-                <td style="padding:10px;"><?php echo htmlspecialchars($row['comments']); ?></td>
-                <td style="padding:10px;"><?php echo date('F j, Y', strtotime($row['created_at'])); ?></td>
-            </tr>
-        <?php endwhile; ?>
-        </tbody>
-    </table>
+    <br>
+
+    <!-- VIEW ALL FEEDBACK -->
+    <div class="card">
+        <h3>Previous Feedback</h3>
+
+        <?php if ($feedback_list->num_rows > 0): ?>
+            <?php while($fb = $feedback_list->fetch_assoc()): ?>
+                <div class="feedback-item">
+                    <strong><?= htmlspecialchars($fb['learner_name']) ?></strong>  
+                    <span>(Rating: <?= $fb['rating'] ?>/5)</span>
+                    <p><?= nl2br(htmlspecialchars($fb['comments'])) ?></p>
+                    <small><?= $fb['created_at'] ?></small>
+                </div>
+                <hr>
+            <?php endwhile; ?>
+        <?php else: ?>
+            <p>No feedback yet for this session.</p>
+        <?php endif; ?>
+    </div>
+
 </div>
+
 </body>
 </html>
-<?php require_once "../../includes/admin_footer.php"; ?>

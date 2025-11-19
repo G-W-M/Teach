@@ -105,3 +105,93 @@ INSERT INTO test_questions (unit_id, question_text, option_1, option_2, option_3
 (8, 'What are liquidated damages?', 'Pre-agreed damage amount', 'Court-determined damages', 'Punitive damages', 'Compensatory damages', 1),
 (8, 'What is the parol evidence rule?', 'Written contract excludes prior oral agreements', 'All evidence must be written', 'Oral contracts are invalid', 'Witness testimony required', 1);
 
+-- USERS
+INSERT INTO users (student_id, email, password_hash, user_name, phone, role)
+VALUES
+(NULL, 'admin@teachme.ac.ke', '$2y$10$TKh8H1.P8hX8K/6EwY4jWeQoBpXK8O6h2zV2N7P.p7h9fT6Qs8kXW', 'System Admin', '0700000000', 'admin'),
+('123456', 'learner1@strathmore.edu', '$2y$10$KbQi3XOvM/8C9yF5qKxOeuI5f8lQW57iL1XhI/UZh1gVx5Y5PUEyC', 'Alice Mwangi', '0711000001', 'learner'),
+('123457', 'learner2@strathmore.edu', '$2y$10$WbC8lZ4Rk3vD9xK9TqFvOuRzP6YdV5wH1jFZ8uV1fT6kP5L3qE4UO', 'Brian Otieno', '0711000002', 'learner'),
+('223344', 'tutor1@strathmore.edu', '$2y$10$ZkC9lT5Wk2hF7uJ3VqLdPtM6QjYcW8yX3mA2rV0jK8gB9N1L6R4S', 'Carol Achieng', '0711222333', 'tutor'),
+('223345', 'tutor2@strathmore.edu', '$2y$10$YpB7kL1Vj6fH4xN2QsRtEuP3LwMdC9yX1kF2jZ0rV6hG3J8P1T9Q', 'David Kimani', '0711222334', 'tutor');
+
+-- ADMIN
+INSERT INTO admin (admin_id, staff_number)
+VALUES
+(1, 'STF001');
+
+-- TUTOR (parent table for profiles)
+INSERT INTO tutor (tutor_id, bio, max_students, current_students, rating, status)
+VALUES
+(4, 'Expert in Business courses with 3+ years experience.', 3, 0, 4.5, 'active'),
+(5, 'Passionate programmer specializing in Data Structures.', 3, 1, 4.8, 'active');
+
+-- TUTOR PROFILES
+INSERT INTO tutor_profiles (tutor_id, bio, rating, current_students, max_students)
+VALUES
+(4, 'Expert in Business courses with 3+ years experience.', 4.5, 0, 3),
+(5, 'Passionate programmer specializing in Data Structures.', 4.8, 1, 3);
+
+-- LEARNER PROFILES
+INSERT INTO learner_profiles (profile_id, user_id, year_of_study, faculty)
+VALUES
+(2, 2, '2nd Year', 'Business School'),
+(3, 3, '1st Year', 'Informatics & Computer Science');
+
+-- LEARNING REQUESTS
+INSERT INTO learning_requests (learner_id, unit_id, description, preferred_schedule, urgency, status, matched_tutor_id)
+VALUES
+(2, 1, 'Need help with introduction to business basics.', 'Mon morning', 'Medium', 'matched', 4),
+(3, 6, 'Struggling with linked lists & trees.', 'Tue afternoon', 'High', 'matched', 5);
+
+-- SESSIONS
+INSERT INTO sessions (request_id, tutor_id, learner_id, session_date, start_time, end_time)
+VALUES
+(1, 4, 2, '2025-01-10', '09:00:00', '10:00:00'),
+(2, 5, 3, '2025-01-11', '13:00:00', '14:00:00');
+
+-- ATTENDANCE
+INSERT INTO session_attendance (session_id, user_id, attended)
+VALUES
+(1, 2, TRUE),
+(1, 4, TRUE),
+(2, 3, TRUE),
+(2, 5, FALSE);
+
+-- FEEDBACK
+INSERT INTO feedback (session_id, learner_id, tutor_id, rating, comments)
+VALUES
+(1, 2, 4, 5, 'Very helpful session!'),
+(2, 3, 5, 4, 'Good explanation, but tutor came late.');
+
+-- CERTIFICATES
+INSERT INTO certificates (tutor_id, certificate_type)
+VALUES
+(4, 'Business Tutor Level 1'),
+(5, 'ICT Tutor Level 2');
+
+-- SYSTEM LOGS
+INSERT INTO system_logs (user_id, action, category, details)
+VALUES
+(1, 'LOGIN', 'auth', 'Admin logged in'),
+(4, 'SESSION_COMPLETED', 'tutor', 'Completed tutoring session 001'),
+(2, 'REQUEST_SUBMITTED', 'learner', 'Learning request for Business 101');
+
+-- NOTIFICATIONS
+INSERT INTO notifications (user_id, message, type)
+VALUES
+(2, 'Your tutor has been assigned!', 'info'),
+(3, 'Upcoming session scheduled for tomorrow', 'alert'),
+(4, 'New learner matched!', 'info');
+
+-- TUTOR TESTS
+INSERT INTO tutor_tests (user_id, unit_id, score, total_questions, passed)
+VALUES
+(4, 1, 9, 10, TRUE),
+(4, 3, 8, 10, TRUE),
+(5, 6, 10, 10, TRUE);
+
+-- TUTORING REQUESTS
+INSERT INTO tutoring_requests (user_id, unit, assigned_tutor, status)
+VALUES
+(2, 'BCOM101', 'Carol Achieng', 'Closed'),
+(3, 'BBT102', 'David Kimani', 'Open');
